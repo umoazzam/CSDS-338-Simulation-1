@@ -75,6 +75,12 @@ public class Simulation {
       return true;
    }
 
+   private int checkReUse(String bName) {
+      int bSize = MemoryList.size();
+      MemoryBlock block = new MemoryBlock();
+
+   }
+
    private int checkFreeBlock(int blockSize) {
       int listSize = MemoryList.size();
       MemoryBlock Block = new MemoryBlock();
@@ -89,7 +95,7 @@ public class Simulation {
       return -1;
    }
    
-  
+
 
    private static class Request {
 
