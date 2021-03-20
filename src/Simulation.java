@@ -28,7 +28,7 @@ public class Simulation {
       // check if there already exists a block with the same name
       if (checkReUse(bName) != -1) {
          System.out.println("Memory could not be allocated: " +
-               bName + " block name already being used");
+               bName + " block already being used");
       }
 
       // find a block to fit the current request
@@ -75,24 +75,39 @@ public class Simulation {
       return true;
    }
 
-    
-  public boolean realloc(String bName, int bSize){
-   int blockIndex = 0;       
-   
-   // the block must be freed before reallocating
-   if(free(bName) == false){ 
-     System.out.println("Error: Freeing failed in realloc");                 
-    return false;
-   }
+   public boolean realloc(String bName, int bSize){
+      int blockIndex = 0;
 
-   // now allocate the block
-   if(malloc(bName,bSize) == false){
-     System.out.println("Error: malloc failed in realloc");
-    return false;
-   }
+      // the block must be freed before reallocating
+      if(free(bName) == false){
+         System.out.println("Error: Freeing failed in realloc");
+         return false;
+      }
 
-   return true;   
+      // now allocate the block
+      if(malloc(bName,bSize) == false){
+         System.out.println("Error: malloc failed in realloc");
+         return false;
+      }
+
+      return true;
   }
+
+   private int checkReUse(String bName) {
+      int bSize = MemoryList.size();
+      MemoryBlock block = new MemoryBlock();
+
+      // traverse list to find if any blocks of the same name are already being used
+      for (int i = 0; i < bSize; i++) {
+         block = (MemoryBlock) MemoryList.elementAt(i);
+         if (block.blockStatus == true) {
+            if (block.blockName.equals(bName)) {
+               return i;
+            }
+         }
+      }
+      return -1;
+   }
 
    private int checkFreeBlock(int blockSize) {
       int listSize = MemoryList.size();
