@@ -108,7 +108,18 @@ public class Simulation {
       return -1;
    }
    
-  
+    
+  private void mergeBlocks(int blockIndex, MemoryBlock Block){
+   int bSize = MemoryList.size(); 
+
+   MemoryBlock LeftBlock = new MemoryBlock();
+   MemoryBlock RightBlock = new MemoryBlock();
+
+   if(blockIndex == 0 && bSize == 1){
+    Block.blockStatus = false;
+    nAvailable = nAvailable + Block.blockSize;
+    return;
+   }
 
    private static class Request {
 
