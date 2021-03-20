@@ -56,6 +56,25 @@ public class Simulation {
       return true;
    }
 
+    
+  public boolean realloc(String bName, int bSize){
+   int blockIndex = 0;       
+   
+   // the block must be freed before reallocating
+   if(free(bName) == false){ 
+     System.out.println("Error: Freeing failed in realloc");                 
+    return false;
+   }
+
+   // now allocate the block
+   if(malloc(bName,bSize) == false){
+     System.out.println("Error: malloc failed in realloc");
+    return false;
+   }
+
+   return true;   
+  }
+
    private int checkFreeBlock(int blockSize) {
       int listSize = MemoryList.size();
       MemoryBlock Block = new MemoryBlock();
