@@ -135,6 +135,52 @@ public class Simulation {
       }
    }
 
+   
+   if(blockIndex == 0 && bSize > 1){
+    RightBlock = (MemoryBlock)MemoryList.elementAt(blockIndex+1);
+        if(RightBlock.blockStatus == false){
+            RightBlock.startAddr =  Block.startAddr;
+            RightBlock.blockSize += Block.blockSize;
+            MemoryList.removeElementAt(blockIndex);
+        }
+   }
+   else{
+        if(blockIndex == bSize-1){
+         LeftBlock = (MemoryBlock)MemoryList.elementAt(blockIndex-1);
+            if(LeftBlock.bBlockStatus == false){
+              LeftBlock.endAddr   =  Block.endAddr;
+              LeftBlock.blockSize += Block.blockSize;
+              MemoryList.removeElementAt(blockIndex);
+            }
+        }
+        else{
+          RightBlock = (MemoryBlock)MemoryList.elementAt(blockIndex+1);
+          LeftBlock  = (MemoryBlock)MemoryList.elementAt(blockIndex-1);
+          if(LeftBlock.blockStatus  == false &&
+             RightBlock.blockStatus == false){
+             LeftBlock.endAddr = RightBlock.endAddr;
+             LeftBlock.blockSize += (RightBlock.blockSize+Block.blockSize);
+             MemoryList.removeElementAt(blockIndex+1);
+             MemoryList.removeElementAt(blockIndex);
+          }
+          if(LeftBlock.blockStatus  == false &&
+             RightBlock.blockStatus == true){
+             LeftBlock.endAddr   =  Block.endAddr;
+             LeftBlock.blockSize += Block.blockSize;
+             MemoryList.removeElementAt(blockIndex);
+          }
+          if(RightBlock.blockStatus  == false &&
+             LeftBlock.blockStatus == true){
+             RightBlock.startAddr   =  Block.startAddr;
+             RightBlock.blockSize += Block.blockSize;
+             MemoryList.removeElementAt(blockIndex);
+          }
+        }
+   }
+   nAvailable = nAvailable + Block.blockSize;
+  }
+   
+
    private static class Request {
 
       public String requestName;
