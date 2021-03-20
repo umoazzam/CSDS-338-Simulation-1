@@ -75,23 +75,23 @@ public class Simulation {
       return true;
    }
 
-   public boolean realloc(String bName, int bSize){
+   public boolean realloc(String bName, int bSize) {
       int blockIndex = 0;
 
       // the block must be freed before reallocating
-      if(free(bName) == false){
+      if (free(bName) == false) {
          System.out.println("Error: Freeing failed in realloc");
          return false;
       }
 
       // now allocate the block
-      if(malloc(bName,bSize) == false){
+      if (malloc(bName, bSize) == false) {
          System.out.println("Error: malloc failed in realloc");
          return false;
       }
 
       return true;
-  }
+   }
 
    private int checkReUse(String bName) {
       int bSize = MemoryList.size();
@@ -113,11 +113,11 @@ public class Simulation {
       int listSize = MemoryList.size();
       MemoryBlock Block = new MemoryBlock();
 
-      for(int index = 0; index < listSize; index++){
+      for (int index = 0; index < listSize; index++) {
          Block = (MemoryBlock) MemoryList.elementAt(index);
 
-         if(Block.blockStatus == false){
-            if(Block.blockSize >= blockSize) return index;
+         if (Block.blockStatus == false) {
+            if (Block.blockSize >= blockSize) return index;
          }
       }
       return -1;
@@ -133,53 +133,45 @@ public class Simulation {
          Block.blockStatus = false;
          nAvailable = nAvailable + Block.blockSize;
       }
-   }
 
-   
-   if(blockIndex == 0 && bSize > 1){
-    RightBlock = (MemoryBlock)MemoryList.elementAt(blockIndex+1);
-        if(RightBlock.blockStatus == false){
-            RightBlock.startAddr =  Block.startAddr;
+      if (blockIndex == 0 && bSize > 1) {
+         RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
+         if (RightBlock.blockStatus == false) {
+            RightBlock.startAddr = Block.startAddr;
             RightBlock.blockSize += Block.blockSize;
             MemoryList.removeElementAt(blockIndex);
-        }
-   }
-   else{
-        if(blockIndex == bSize-1){
-         LeftBlock = (MemoryBlock)MemoryList.elementAt(blockIndex-1);
-            if(LeftBlock.bBlockStatus == false){
-              LeftBlock.endAddr   =  Block.endAddr;
-              LeftBlock.blockSize += Block.blockSize;
-              MemoryList.removeElementAt(blockIndex);
+         }
+      } else {
+         if (blockIndex == bSize - 1) {
+            LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
+            if (LeftBlock.blockStatus == false) {
+               LeftBlock.endAddr = Block.endAddr;
+               LeftBlock.blockSize += Block.blockSize;
+               MemoryList.removeElementAt(blockIndex);
             }
-        }
-        else{
-          RightBlock = (MemoryBlock)MemoryList.elementAt(blockIndex+1);
-          LeftBlock  = (MemoryBlock)MemoryList.elementAt(blockIndex-1);
-          if(LeftBlock.blockStatus  == false &&
-             RightBlock.blockStatus == false){
-             LeftBlock.endAddr = RightBlock.endAddr;
-             LeftBlock.blockSize += (RightBlock.blockSize+Block.blockSize);
-             MemoryList.removeElementAt(blockIndex+1);
-             MemoryList.removeElementAt(blockIndex);
-          }
-          if(LeftBlock.blockStatus  == false &&
-             RightBlock.blockStatus == true){
-             LeftBlock.endAddr   =  Block.endAddr;
-             LeftBlock.blockSize += Block.blockSize;
-             MemoryList.removeElementAt(blockIndex);
-          }
-          if(RightBlock.blockStatus  == false &&
-             LeftBlock.blockStatus == true){
-             RightBlock.startAddr   =  Block.startAddr;
-             RightBlock.blockSize += Block.blockSize;
-             MemoryList.removeElementAt(blockIndex);
-          }
-        }
+         } else {
+            RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
+            LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
+            if (LeftBlock.blockStatus == false && RightBlock.blockStatus == false) {
+               LeftBlock.endAddr = RightBlock.endAddr;
+               LeftBlock.blockSize += (RightBlock.blockSize + Block.blockSize);
+               MemoryList.removeElementAt(blockIndex + 1);
+               MemoryList.removeElementAt(blockIndex);
+            }
+            if (LeftBlock.blockStatus == false && RightBlock.blockStatus == true) {
+               LeftBlock.endAddr = Block.endAddr;
+               LeftBlock.blockSize += Block.blockSize;
+               MemoryList.removeElementAt(blockIndex);
+            }
+            if (RightBlock.blockStatus == false && LeftBlock.blockStatus == true) {
+               RightBlock.startAddr = Block.startAddr;
+               RightBlock.blockSize += Block.blockSize;
+               MemoryList.removeElementAt(blockIndex);
+            }
+         }
+      }
+      nAvailable = nAvailable + Block.blockSize;
    }
-   nAvailable = nAvailable + Block.blockSize;
-  }
-   
 
    private static class Request {
 

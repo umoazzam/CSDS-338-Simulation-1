@@ -115,7 +115,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616271844678</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="working on merge">
+      <created>1616274589792</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1616274589792</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -141,6 +148,7 @@
     <MESSAGE value="completed free method" />
     <MESSAGE value="checkreuse in progress" />
     <MESSAGE value="finished checkreuse method" />
-    <option name="LAST_COMMIT_MESSAGE" value="finished checkreuse method" />
+    <MESSAGE value="working on merge" />
+    <option name="LAST_COMMIT_MESSAGE" value="working on merge" />
   </component>
 </project>
