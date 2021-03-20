@@ -56,18 +56,18 @@ public class Simulation {
       return true;
    }
 
-   private int checkFreeBlock(int blockSize){
-   int listSize = MemoryList.size();
-   MemoryBlock Block = new MemoryBlock();
+   private int checkFreeBlock(int blockSize) {
+      int listSize = MemoryList.size();
+      MemoryBlock Block = new MemoryBlock();
 
-   for(int index=0; index < listSize; index++){
-    Block = (MemoryBlock)MemoryList.elementAt(index);
+      for(int index = 0; index < listSize; index++){
+         Block = (MemoryBlock) MemoryList.elementAt(index);
 
-    if(Block.blockStatus == false){
-     if(Block.blockSize >= blockSize) return index;
-    }
-   }
-   return -1;
+         if(Block.blockStatus == false){
+            if(Block.blockSize >= blockSize) return index;
+         }
+      }
+      return -1;
    }
    
   
