@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e0d9e74-04ce-4a41-9761-12fde82aba36" name="Default Changelist" comment="created memoryblock class">
+    <list default="true" id="4e0d9e74-04ce-4a41-9761-12fde82aba36" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MemoryBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MemoryBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Simulation.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -59,7 +60,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616262769035</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="changed requests class to request">
+      <created>1616265237913</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1616265237913</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -77,6 +85,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="created memoryblock class" />
-    <option name="LAST_COMMIT_MESSAGE" value="created memoryblock class" />
+    <MESSAGE value="changed requests class to request" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed requests class to request" />
   </component>
 </project>
