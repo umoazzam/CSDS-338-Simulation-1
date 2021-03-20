@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4e0d9e74-04ce-4a41-9761-12fde82aba36" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MemoryBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MemoryBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Simulation.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -130,7 +129,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616275142785</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="added in compact method">
+      <created>1616280466021</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1616280466021</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -158,6 +164,7 @@
     <MESSAGE value="finished checkreuse method" />
     <MESSAGE value="working on merge" />
     <MESSAGE value="finished formatting for merge" />
-    <option name="LAST_COMMIT_MESSAGE" value="finished formatting for merge" />
+    <MESSAGE value="added in compact method" />
+    <option name="LAST_COMMIT_MESSAGE" value="added in compact method" />
   </component>
 </project>

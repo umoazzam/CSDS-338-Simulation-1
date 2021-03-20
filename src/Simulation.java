@@ -2,29 +2,40 @@ import java.util.*;
 
 public class Simulation {
 
+   // linked list of blocks of memory
    private Vector MemoryList;
+   // number of blocks
    private int nBlocks;
+   // maximum size of the memory
    private int maxHeapSize;
+   // amount of memory currently available
    private int nAvailable;
+   // start time of simulation
    private long start;
 
+   // constructor, sets up memory list as contiguous block of memory
    public Simulation(int maxHeapSize, long start) {
+      // instantiating private fields
       this.maxHeapSize = maxHeapSize;
       this.start = start;
       MemoryList = new Vector();
 
+      // instantiating contiguous block of memory
       MemoryBlock block = new MemoryBlock(maxHeapSize, 0, maxHeapSize);
       MemoryList.addElement(block);
       nAvailable = maxHeapSize;
    }
 
+   // creates stream of requests and allocates in memory
    public static void main(String[] args) {
+      // creates queue of randomly-generated requests
       Random randPages = new Random();
       Queue<Request> reqs = new LinkedList<>();
       for (int i = 0; i < 500; i++) {
          reqs.add(new Request("req" + i, randPages.nextInt(20)));
       }
 
+      // starts simulation, feeds requests to simulator for memory allocation
       Simulation sim = new Simulation(10000, System.nanoTime());
       while(!reqs.isEmpty()) {
          if(!sim.malloc(reqs.remove())) {
@@ -35,11 +46,14 @@ public class Simulation {
       }
    }
 
+   // takes in request and sends to private method with request name and size
    public boolean malloc(Request req) {
       return malloc(req.name, req.size);
    }
 
-   public boolean malloc(String bName, int bSize) {
+   /* allocates memory for request, based on first-fit method
+      returns false if memory allocation fails */
+   private boolean malloc(String bName, int bSize) {
       int blockIndex = 0;
       MemoryBlock b = new MemoryBlock();
 
@@ -59,12 +73,10 @@ public class Simulation {
       b = (MemoryBlock) MemoryList.elementAt(blockIndex);
       int tempBlockSize = b.size - bSize;
       int tempEndAddr = b.endAddr;
-
       b.status = true;
       b.endAddr = b.startAddr + bSize;
       b.size = bSize;
       b.name = bName;
-
       if (tempBlockSize != 0) {
          MemoryBlock newBlock = new MemoryBlock(
                tempBlockSize,
@@ -75,11 +87,14 @@ public class Simulation {
       return true;
    }
 
+   /* frees allocated memory for other use
+      returns false if specified block cannot be freed */
    public boolean free(String bName) {
       int blockIndex = 0;
       int bSize = MemoryList.size();
       MemoryBlock block = new MemoryBlock();
 
+      // check if there already exists a block with the same name
       if ((blockIndex = checkReUse(bName)) == -1) {
          System.out.println("Error: no memory available to allocate request");
          return false;
@@ -93,6 +108,8 @@ public class Simulation {
       return true;
    }
 
+   /* not sure if this will be included
+    */
    public boolean realloc(String bName, int bSize) {
       int blockIndex = 0;
 
@@ -111,6 +128,7 @@ public class Simulation {
       return true;
    }
 
+   // frees empty space at higher memory addresses and reallocates memory to lower addresses
    public void compact(){
       int nSize = MemoryList.size();
       String blockNames[] = new String[nSize];
@@ -120,8 +138,9 @@ public class Simulation {
       int index = 0;
       int indexF = 0;
 
+      // collect allocated blocks in memory using two-pass memory compaction
       while(index < nSize){
-         Block = (MemoryBlock)MemoryList.elementAt(index);
+         Block = (MemoryBlock) MemoryList.elementAt(index);
          if(Block.status == true && index != 0){
             blockNames[indexF] = Block.name;
             blockSizes[indexF] = Block.size;
@@ -129,9 +148,9 @@ public class Simulation {
          }
          index++;
       }
+      index = 0;
 
-      index=0;
-
+      // move collected memory blocks to lower memory location
       while(index < indexF){
          free(blockNames[index]);
          malloc(blockNames[index],blockSizes[index]);
