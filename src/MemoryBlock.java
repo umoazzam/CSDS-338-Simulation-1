@@ -7,6 +7,9 @@ public class MemoryBlock {
    public int endAddr;
 
 
+   public MemoryBlock(){
+
+   }
 
    public MemoryBlock(String blockName, boolean blockStatus, int blockSize,
                       int startAddr, int endAddr) {

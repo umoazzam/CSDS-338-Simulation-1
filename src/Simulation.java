@@ -21,6 +21,18 @@ public class Simulation {
 
    }
 
+   public boolean malloc(String bName, int bSize) {
+      MemoryBlock b = new MemoryBlock();
+
+      // check if there already exists a block with the same name
+
+      // find a block to fit the current request
+
+      // get the block
+
+      return true;
+   }
+
    private static class Request {
 
       public String requestName;
