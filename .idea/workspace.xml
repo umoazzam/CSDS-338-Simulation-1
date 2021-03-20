@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e0d9e74-04ce-4a41-9761-12fde82aba36" name="Default Changelist" comment="added Simulation constructor and private fields">
+    <list default="true" id="4e0d9e74-04ce-4a41-9761-12fde82aba36" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Simulation.java" afterDir="false" />
     </list>
@@ -73,7 +73,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616266607437</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added generic constructor for memoryblock and made changes to malloc">
+      <created>1616267538563</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1616267538563</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -93,6 +100,7 @@
     <MESSAGE value="created memoryblock class" />
     <MESSAGE value="changed requests class to request" />
     <MESSAGE value="added Simulation constructor and private fields" />
-    <option name="LAST_COMMIT_MESSAGE" value="added Simulation constructor and private fields" />
+    <MESSAGE value="added generic constructor for memoryblock and made changes to malloc" />
+    <option name="LAST_COMMIT_MESSAGE" value="added generic constructor for memoryblock and made changes to malloc" />
   </component>
 </project>
