@@ -56,6 +56,22 @@ public class Simulation {
       return true;
    }
 
+   private int checkFreeBlock(int blockSize){
+   int listSize = MemoryList.size();
+   MemoryBlock Block = new MemoryBlock();
+
+   for(int index=0; index < listSize; index++){
+    Block = (MemoryBlock)MemoryList.elementAt(index);
+
+    if(Block.blockStatus == false){
+     if(Block.blockSize >= blockSize) return index;
+    }
+   }
+   return -1;
+   }
+   
+  
+
    private static class Request {
 
       public String requestName;
@@ -72,7 +88,5 @@ public class Simulation {
 
 
    }
-
-
 
 }
