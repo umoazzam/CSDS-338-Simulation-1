@@ -58,13 +58,13 @@ public class Simulation {
       MemoryBlock b = new MemoryBlock();
 
       // check if there already exists a block with the same name
-      if (checkReUse(bName) != -1) {
+      if (findBlock(bName) != -1) {
          System.out.println("Memory could not be allocated: " +
                bName + " block already being used");
       }
 
       // find a block to fit the current request
-      if ((blockIndex = checkFreeBlock(bSize)) == -1) {
+      if ((blockIndex = findFreeBlock(bSize)) == -1) {
          System.out.println("Error: no memory available to allocate request");
          return false;
       }
@@ -95,7 +95,7 @@ public class Simulation {
       MemoryBlock block = new MemoryBlock();
 
       // check if there already exists a block with the same name
-      if ((blockIndex = checkReUse(bName)) == -1) {
+      if ((blockIndex = findBlock(bName)) == -1) {
          System.out.println("Error: no memory available to allocate request");
          return false;
       }
@@ -158,13 +158,17 @@ public class Simulation {
       }
    }
 
-   private int checkReUse(String bName) {
+   /* searches for block in memory with a given name
+      returns index if block is present, -1 if block isn't present */
+   private int findBlock(String bName) {
       int bSize = MemoryList.size();
       MemoryBlock block = new MemoryBlock();
 
       // traverse list to find if any blocks of the same name are already being used
       for (int i = 0; i < bSize; i++) {
          block = (MemoryBlock) MemoryList.elementAt(i);
+
+         // checks if the block is being used currently to hold memory
          if (block.status == true) {
             if (block.name.equals(bName)) {
                return i;
@@ -174,7 +178,9 @@ public class Simulation {
       return -1;
    }
 
-   private int checkFreeBlock(int blockSize) {
+   /* searches memory for free block pf memory of specified size
+      returns index if block is found, -1 if block isn't present */
+   private int findFreeBlock(int blockSize) {
       int listSize = MemoryList.size();
       MemoryBlock Block = new MemoryBlock();
 
@@ -188,33 +194,40 @@ public class Simulation {
       return -1;
    }
 
+   // merges adjacent blocks of free memory
    private void mergeBlocks(int blockIndex, MemoryBlock Block) {
       int bSize = MemoryList.size();
 
       MemoryBlock LeftBlock = new MemoryBlock();
       MemoryBlock RightBlock = new MemoryBlock();
 
+      // if only one block is available, mark it empty
       if (blockIndex == 0 && bSize == 1) {
          Block.status = false;
          nAvailable = nAvailable + Block.size;
       }
 
+      // check if adjacent blocks are free and expand
       if (blockIndex == 0 && bSize > 1) {
          RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
          if (RightBlock.status == false) {
+            // manipulate address field
             RightBlock.startAddr = Block.startAddr;
             RightBlock.size += Block.size;
             MemoryList.removeElementAt(blockIndex);
          }
       } else {
+         // check if final block is the end of free memory
          if (blockIndex == bSize - 1) {
             LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
             if (LeftBlock.status == false) {
+               // manipulate address field
                LeftBlock.endAddr = Block.endAddr;
                LeftBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
             }
          } else {
+            // merge left and right block
             RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
             LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
             if (LeftBlock.status == false && RightBlock.status == false) {
@@ -224,11 +237,13 @@ public class Simulation {
                MemoryList.removeElementAt(blockIndex);
             }
             if (LeftBlock.status == false && RightBlock.status == true) {
+               // manipulate address field
                LeftBlock.endAddr = Block.endAddr;
                LeftBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
             }
             if (RightBlock.status == false && LeftBlock.status == true) {
+               // manipulate address field
                RightBlock.startAddr = Block.startAddr;
                RightBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
@@ -238,11 +253,15 @@ public class Simulation {
       nAvailable = nAvailable + Block.size;
    }
 
+   // generates and stores information about request
    private static class Request {
 
+      // name of request
       public String name;
+      // size of memory needed for request allocation
       public int size;
 
+      // instantiates request fields
       public Request(String name, int size) {
          this.name = name;
          this.size = size;

@@ -136,7 +136,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616280466021</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="added comments to major methods">
+      <created>1616282402819</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1616282402819</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -165,6 +172,7 @@
     <MESSAGE value="working on merge" />
     <MESSAGE value="finished formatting for merge" />
     <MESSAGE value="added in compact method" />
-    <option name="LAST_COMMIT_MESSAGE" value="added in compact method" />
+    <MESSAGE value="added comments to major methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="added comments to major methods" />
   </component>
 </project>
