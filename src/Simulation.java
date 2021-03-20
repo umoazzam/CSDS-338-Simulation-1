@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.*;
 
 public class Simulation {
 
@@ -6,9 +6,11 @@ public class Simulation {
    private int nBlocks;
    private int maxHeapSize;
    private int nAvailable;
+   private long start;
 
-   public Simulation(int maxHeapSize) {
+   public Simulation(int maxHeapSize, long start) {
       this.maxHeapSize = maxHeapSize;
+      this.start = start;
       MemoryList = new Vector();
 
       MemoryBlock block = new MemoryBlock(maxHeapSize, 0, maxHeapSize);
@@ -17,8 +19,24 @@ public class Simulation {
    }
 
    public static void main(String[] args) {
-      Request request = new Request(500, 10);
+      Random randPages = new Random();
+      Queue<Request> reqs = new LinkedList<>();
+      for (int i = 0; i < 500; i++) {
+         reqs.add(new Request("req" + i, randPages.nextInt(20)));
+      }
 
+      Simulation sim = new Simulation(10000, System.nanoTime());
+      while(!reqs.isEmpty()) {
+         if(!sim.malloc(reqs.remove())) {
+            System.out.println("Simulation ended due to previous error");
+            break;
+         }
+         sim.compact();
+      }
+   }
+
+   public boolean malloc(Request req) {
+      return malloc(req.name, req.size);
    }
 
    public boolean malloc(String bName, int bSize) {
@@ -39,13 +57,13 @@ public class Simulation {
 
       // get block and update fields
       b = (MemoryBlock) MemoryList.elementAt(blockIndex);
-      int tempBlockSize = b.blockSize - bSize;
+      int tempBlockSize = b.size - bSize;
       int tempEndAddr = b.endAddr;
 
-      b.blockStatus = true;
+      b.status = true;
       b.endAddr = b.startAddr + bSize;
-      b.blockSize = bSize;
-      b.blockName = bName;
+      b.size = bSize;
+      b.name = bName;
 
       if (tempBlockSize != 0) {
          MemoryBlock newBlock = new MemoryBlock(
@@ -68,8 +86,8 @@ public class Simulation {
       }
 
       block = (MemoryBlock) MemoryList.elementAt(blockIndex);
-      block.blockStatus = false;
-      block.blockName = "free";
+      block.status = false;
+      block.name = "free";
 
       mergeBlocks(blockIndex, block);
       return true;
@@ -93,6 +111,34 @@ public class Simulation {
       return true;
    }
 
+   public void compact(){
+      int nSize = MemoryList.size();
+      String blockNames[] = new String[nSize];
+      int blockSizes[] = new int[nSize];
+
+      MemoryBlock Block = new MemoryBlock();
+      int index = 0;
+      int indexF = 0;
+
+      while(index < nSize){
+         Block = (MemoryBlock)MemoryList.elementAt(index);
+         if(Block.status == true && index != 0){
+            blockNames[indexF] = Block.name;
+            blockSizes[indexF] = Block.size;
+            indexF++;
+         }
+         index++;
+      }
+
+      index=0;
+
+      while(index < indexF){
+         free(blockNames[index]);
+         malloc(blockNames[index],blockSizes[index]);
+         index++;
+      }
+   }
+
    private int checkReUse(String bName) {
       int bSize = MemoryList.size();
       MemoryBlock block = new MemoryBlock();
@@ -100,8 +146,8 @@ public class Simulation {
       // traverse list to find if any blocks of the same name are already being used
       for (int i = 0; i < bSize; i++) {
          block = (MemoryBlock) MemoryList.elementAt(i);
-         if (block.blockStatus == true) {
-            if (block.blockName.equals(bName)) {
+         if (block.status == true) {
+            if (block.name.equals(bName)) {
                return i;
             }
          }
@@ -116,8 +162,8 @@ public class Simulation {
       for (int index = 0; index < listSize; index++) {
          Block = (MemoryBlock) MemoryList.elementAt(index);
 
-         if (Block.blockStatus == false) {
-            if (Block.blockSize >= blockSize) return index;
+         if (Block.status == false) {
+            if (Block.size >= blockSize) return index;
          }
       }
       return -1;
@@ -130,59 +176,56 @@ public class Simulation {
       MemoryBlock RightBlock = new MemoryBlock();
 
       if (blockIndex == 0 && bSize == 1) {
-         Block.blockStatus = false;
-         nAvailable = nAvailable + Block.blockSize;
+         Block.status = false;
+         nAvailable = nAvailable + Block.size;
       }
 
       if (blockIndex == 0 && bSize > 1) {
          RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
-         if (RightBlock.blockStatus == false) {
+         if (RightBlock.status == false) {
             RightBlock.startAddr = Block.startAddr;
-            RightBlock.blockSize += Block.blockSize;
+            RightBlock.size += Block.size;
             MemoryList.removeElementAt(blockIndex);
          }
       } else {
          if (blockIndex == bSize - 1) {
             LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
-            if (LeftBlock.blockStatus == false) {
+            if (LeftBlock.status == false) {
                LeftBlock.endAddr = Block.endAddr;
-               LeftBlock.blockSize += Block.blockSize;
+               LeftBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
             }
          } else {
             RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
             LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
-            if (LeftBlock.blockStatus == false && RightBlock.blockStatus == false) {
+            if (LeftBlock.status == false && RightBlock.status == false) {
                LeftBlock.endAddr = RightBlock.endAddr;
-               LeftBlock.blockSize += (RightBlock.blockSize + Block.blockSize);
+               LeftBlock.size += (RightBlock.size + Block.size);
                MemoryList.removeElementAt(blockIndex + 1);
                MemoryList.removeElementAt(blockIndex);
             }
-            if (LeftBlock.blockStatus == false && RightBlock.blockStatus == true) {
+            if (LeftBlock.status == false && RightBlock.status == true) {
                LeftBlock.endAddr = Block.endAddr;
-               LeftBlock.blockSize += Block.blockSize;
+               LeftBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
             }
-            if (RightBlock.blockStatus == false && LeftBlock.blockStatus == true) {
+            if (RightBlock.status == false && LeftBlock.status == true) {
                RightBlock.startAddr = Block.startAddr;
-               RightBlock.blockSize += Block.blockSize;
+               RightBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
             }
          }
       }
-      nAvailable = nAvailable + Block.blockSize;
+      nAvailable = nAvailable + Block.size;
    }
 
    private static class Request {
 
-      public String requestName;
-      public int n;
-      public double req;
+      public String name;
       public int size;
 
-      public Request(int n, int size) {
-         this.n = n;
-         this.req = 1/n;
+      public Request(String name, int size) {
+         this.name = name;
          this.size = size;
       }
 
