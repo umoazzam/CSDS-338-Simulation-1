@@ -25,11 +25,12 @@ public class Simulation {
       int blockIndex = 0;
       MemoryBlock b = new MemoryBlock();
 
-//      // check if there already exists a block with the same name
-//      if (checkReUse(bName) != -1) {
-//         System.out.println("Memory could not be allocated: " +
-//               bName + " block already being used");
-//      }
+      // check if there already exists a block with the same name
+      if (checkReUse(bName) != -1) {
+         System.out.println("Memory could not be allocated: " +
+               bName + " block name already being used");
+      }
+
       // find a block to fit the current request
       if ((blockIndex = checkFreeBlock(bSize)) == -1) {
          System.out.println("Error: no memory available to allocate request");
@@ -53,6 +54,24 @@ public class Simulation {
                tempEndAddr);
       }
 
+      return true;
+   }
+
+   public boolean free(String bName) {
+      int blockIndex = 0;
+      int bSize = MemoryList.size();
+      MemoryBlock block = new MemoryBlock();
+
+      if ((blockIndex = checkReUse(bName)) == -1) {
+         System.out.println("Error: no memory available to allocate request");
+         return false;
+      }
+
+      block = (MemoryBlock) MemoryList.elementAt(blockIndex);
+      block.blockStatus = false;
+      block.blockName = "free";
+
+      mergeBlocks(blockIndex, block);
       return true;
    }
 
