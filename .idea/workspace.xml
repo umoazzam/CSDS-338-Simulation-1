@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4e0d9e74-04ce-4a41-9761-12fde82aba36" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MemoryBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MemoryBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Simulation.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -165,7 +164,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616283785326</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="project functional, working on listing defrag">
+      <created>1616290960121</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1616290960121</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -196,6 +202,7 @@
     <MESSAGE value="added in compact method" />
     <MESSAGE value="added comments to major methods" />
     <MESSAGE value="completed all commentary" />
-    <option name="LAST_COMMIT_MESSAGE" value="completed all commentary" />
+    <MESSAGE value="project functional, working on listing defrag" />
+    <option name="LAST_COMMIT_MESSAGE" value="project functional, working on listing defrag" />
   </component>
 </project>

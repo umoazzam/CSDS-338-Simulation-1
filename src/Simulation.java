@@ -8,6 +8,8 @@ public class Simulation {
    private int nBlocks;
    // amount of memory currently available
    private int nAvailable;
+   // max size of memory
+   private int maxHeapSize;
    // start time of simulation
    private long start;
 
@@ -15,6 +17,7 @@ public class Simulation {
    public Simulation(int maxHeapSize, long start) {
       System.out.println("Simulation started");
       // instantiating private fields
+      this.maxHeapSize = maxHeapSize;
       nAvailable = maxHeapSize;;
       this.start = start;
       MemoryList = new Vector();
@@ -36,14 +39,19 @@ public class Simulation {
       // starts simulation, feeds requests to simulator for memory allocation
       Simulation sim = new Simulation(10000, System.nanoTime());
       while(!reqs.isEmpty()) {
-         System.out.println("Allocating request ");
+         sim.nBlocks = 0;
+         String reqName = reqs.peek().name;
+         System.out.println("Allocating request: " + reqs.peek());
          if(!sim.malloc(reqs.remove())) {
             System.out.println("Simulation ended due to previous error");
             break;
          }
+         System.out.println("Allocated memory for " + reqName +
+               " at index " + sim.findBlock(reqName) + ", time = " + sim.getTime());
          System.out.println();
          sim.compact();
          System.out.println("Memory available: " + sim.nAvailable);
+         System.out.println("Number of blocks used: " + sim.nBlocks);
          System.out.println();
 
       }
@@ -59,7 +67,6 @@ public class Simulation {
    /* allocates memory for request, based on first-fit method
       returns false if memory allocation fails */
    private boolean malloc(String bName, int bSize) {
-      System.out.println("Allocating request " + bName + " of size " + bSize);
       int blockIndex;
       MemoryBlock b;
 
@@ -92,11 +99,6 @@ public class Simulation {
       }
 
       nAvailable = nAvailable - bSize;
-
-      System.out.println("Allocated request " + bName +
-            " to block of size " + bSize +
-            " at index " + b.startAddr + "-" + b.endAddr +
-            ", time = " + getTime());
       return true;
    }
 
@@ -116,6 +118,9 @@ public class Simulation {
       block = (MemoryBlock) MemoryList.elementAt(blockIndex);
       block.status = false;
       block.name = "free";
+
+      System.out.println("Fragmentation: " +
+            (double) (block.size) / (double) (maxHeapSize - nAvailable));
 
       mergeBlocks(blockIndex, block);
       return true;
@@ -149,6 +154,7 @@ public class Simulation {
       while(index < indexF){
          free(blockNames[index]);
          malloc(blockNames[index],blockSizes[index]);
+         nBlocks++;
          index++;
       }
 
@@ -179,7 +185,6 @@ public class Simulation {
    /* searches memory for free block pf memory of specified size
       returns index if block is found, -1 if block isn't present */
    private int findFreeBlock(int blockSize) {
-      System.out.println("Searching for free block of size " + blockSize);
       int listSize = MemoryList.size();
       MemoryBlock Block;
 
@@ -188,7 +193,6 @@ public class Simulation {
 
          if (!Block.status) {
             if (Block.size >= blockSize) {
-               System.out.println("Found block of size " + blockSize + " at index " + index);
                return index;
             }
          }
@@ -198,7 +202,6 @@ public class Simulation {
 
    // merges adjacent blocks of free memory
    private void mergeBlocks(int blockIndex, MemoryBlock Block) {
-      System.out.println("Merging blocks at index " + blockIndex);
       int bSize = MemoryList.size();
 
       MemoryBlock LeftBlock;
@@ -254,7 +257,6 @@ public class Simulation {
          }
       }
 
-      System.out.println("Adjacent blocks of memory merged");
       nAvailable = nAvailable + Block.size;
    }
 
@@ -270,6 +272,7 @@ public class Simulation {
       public String name;
       // size of memory needed for request allocation
       public int size;
+      // probability that method will be freed
 
       // instantiates request fields
       public Request(String name, int size) {
@@ -279,7 +282,7 @@ public class Simulation {
 
       @Override
       public String toString() {
-         return "(" + ")";
+         return "(" + name + ", size = " + size + ")";
       }
    }
 
