@@ -6,11 +6,6 @@ public class MemoryBlock {
    public int startAddr;
    public int endAddr;
 
-
-   public MemoryBlock(){
-
-   }
-
    public MemoryBlock(String name, boolean status, int size,
                       int startAddr, int endAddr) {
       this.name = name;

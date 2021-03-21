@@ -6,8 +6,6 @@ public class Simulation {
    private Vector MemoryList;
    // number of blocks
    private int nBlocks;
-   // maximum size of the memory
-   private int maxHeapSize;
    // amount of memory currently available
    private int nAvailable;
    // start time of simulation
@@ -15,15 +13,15 @@ public class Simulation {
 
    // constructor, sets up memory list as contiguous block of memory
    public Simulation(int maxHeapSize, long start) {
+      System.out.println("Simulation started");
       // instantiating private fields
-      this.maxHeapSize = maxHeapSize;
+      nAvailable = maxHeapSize;;
       this.start = start;
       MemoryList = new Vector();
 
       // instantiating contiguous block of memory
       MemoryBlock block = new MemoryBlock(maxHeapSize, 0, maxHeapSize);
       MemoryList.addElement(block);
-      nAvailable = maxHeapSize;
    }
 
    // creates stream of requests and allocates in memory
@@ -32,18 +30,25 @@ public class Simulation {
       Random randPages = new Random();
       Queue<Request> reqs = new LinkedList<>();
       for (int i = 0; i < 500; i++) {
-         reqs.add(new Request("req" + i, randPages.nextInt(20)));
+         reqs.add(new Request("req" + i, randPages.nextInt(19) + 1));
       }
 
       // starts simulation, feeds requests to simulator for memory allocation
       Simulation sim = new Simulation(10000, System.nanoTime());
       while(!reqs.isEmpty()) {
+         System.out.println("Allocating request ");
          if(!sim.malloc(reqs.remove())) {
             System.out.println("Simulation ended due to previous error");
             break;
          }
+         System.out.println();
          sim.compact();
+         System.out.println("Memory available: " + sim.nAvailable);
+         System.out.println();
+
       }
+      System.out.println();
+      System.out.println("Simulation ended. Time elapsed: " + sim.getTime());
    }
 
    // takes in request and sends to private method with request name and size
@@ -54,8 +59,9 @@ public class Simulation {
    /* allocates memory for request, based on first-fit method
       returns false if memory allocation fails */
    private boolean malloc(String bName, int bSize) {
-      int blockIndex = 0;
-      MemoryBlock b = new MemoryBlock();
+      System.out.println("Allocating request " + bName + " of size " + bSize);
+      int blockIndex;
+      MemoryBlock b;
 
       // check if there already exists a block with the same name
       if (findBlock(bName) != -1) {
@@ -82,21 +88,28 @@ public class Simulation {
                tempBlockSize,
                b.startAddr + bSize,
                tempEndAddr);
+         MemoryList.insertElementAt((Object) newBlock, blockIndex + 1);
       }
 
+      nAvailable = nAvailable - bSize;
+
+      System.out.println("Allocated request " + bName +
+            " to block of size " + bSize +
+            " at index " + b.startAddr + "-" + b.endAddr +
+            ", time = " + getTime());
       return true;
    }
 
    /* frees allocated memory for other use
       returns false if specified block cannot be freed */
    public boolean free(String bName) {
-      int blockIndex = 0;
+      int blockIndex;
       int bSize = MemoryList.size();
-      MemoryBlock block = new MemoryBlock();
+      MemoryBlock block;
 
       // check if there already exists a block with the same name
       if ((blockIndex = findBlock(bName)) == -1) {
-         System.out.println("Error: no memory available to allocate request");
+         System.out.println("Error in free(): no memory available to allocate request");
          return false;
       }
 
@@ -108,40 +121,22 @@ public class Simulation {
       return true;
    }
 
-   /* not sure if this will be included
-    */
-   public boolean realloc(String bName, int bSize) {
-      int blockIndex = 0;
-
-      // the block must be freed before reallocating
-      if (free(bName) == false) {
-         System.out.println("Error: Freeing failed in realloc");
-         return false;
-      }
-
-      // now allocate the block
-      if (malloc(bName, bSize) == false) {
-         System.out.println("Error: malloc failed in realloc");
-         return false;
-      }
-
-      return true;
-   }
-
    // frees empty space at higher memory addresses and reallocates memory to lower addresses
    public void compact(){
+      long compactStart = System.nanoTime();
+      System.out.println("Initiating optimal redistribution of memory");
       int nSize = MemoryList.size();
-      String blockNames[] = new String[nSize];
-      int blockSizes[] = new int[nSize];
+      String[] blockNames = new String[nSize];
+      int[] blockSizes = new int[nSize];
 
-      MemoryBlock Block = new MemoryBlock();
+      MemoryBlock Block;
       int index = 0;
       int indexF = 0;
 
       // collect allocated blocks in memory using two-pass memory compaction
       while(index < nSize){
          Block = (MemoryBlock) MemoryList.elementAt(index);
-         if(Block.status == true && index != 0){
+         if(Block.status && index != 0){
             blockNames[indexF] = Block.name;
             blockSizes[indexF] = Block.size;
             indexF++;
@@ -156,20 +151,23 @@ public class Simulation {
          malloc(blockNames[index],blockSizes[index]);
          index++;
       }
+
+      long timeElapsed = System.nanoTime() - compactStart;
+      System.out.println("Memory redistributed, runtime = " + timeElapsed);
    }
 
    /* searches for block in memory with a given name
       returns index if block is present, -1 if block isn't present */
    private int findBlock(String bName) {
       int bSize = MemoryList.size();
-      MemoryBlock block = new MemoryBlock();
+      MemoryBlock block;
 
       // traverse list to find if any blocks of the same name are already being used
       for (int i = 0; i < bSize; i++) {
          block = (MemoryBlock) MemoryList.elementAt(i);
 
          // checks if the block is being used currently to hold memory
-         if (block.status == true) {
+         if (block.status) {
             if (block.name.equals(bName)) {
                return i;
             }
@@ -181,14 +179,18 @@ public class Simulation {
    /* searches memory for free block pf memory of specified size
       returns index if block is found, -1 if block isn't present */
    private int findFreeBlock(int blockSize) {
+      System.out.println("Searching for free block of size " + blockSize);
       int listSize = MemoryList.size();
-      MemoryBlock Block = new MemoryBlock();
+      MemoryBlock Block;
 
       for (int index = 0; index < listSize; index++) {
          Block = (MemoryBlock) MemoryList.elementAt(index);
 
-         if (Block.status == false) {
-            if (Block.size >= blockSize) return index;
+         if (!Block.status) {
+            if (Block.size >= blockSize) {
+               System.out.println("Found block of size " + blockSize + " at index " + index);
+               return index;
+            }
          }
       }
       return -1;
@@ -196,10 +198,11 @@ public class Simulation {
 
    // merges adjacent blocks of free memory
    private void mergeBlocks(int blockIndex, MemoryBlock Block) {
+      System.out.println("Merging blocks at index " + blockIndex);
       int bSize = MemoryList.size();
 
-      MemoryBlock LeftBlock = new MemoryBlock();
-      MemoryBlock RightBlock = new MemoryBlock();
+      MemoryBlock LeftBlock;
+      MemoryBlock RightBlock;
 
       // if only one block is available, mark it empty
       if (blockIndex == 0 && bSize == 1) {
@@ -210,7 +213,7 @@ public class Simulation {
       // check if adjacent blocks are free and expand
       if (blockIndex == 0 && bSize > 1) {
          RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
-         if (RightBlock.status == false) {
+         if (!RightBlock.status) {
             // manipulate address field
             RightBlock.startAddr = Block.startAddr;
             RightBlock.size += Block.size;
@@ -220,7 +223,7 @@ public class Simulation {
          // check if final block is the end of free memory
          if (blockIndex == bSize - 1) {
             LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
-            if (LeftBlock.status == false) {
+            if (!LeftBlock.status) {
                // manipulate address field
                LeftBlock.endAddr = Block.endAddr;
                LeftBlock.size += Block.size;
@@ -230,19 +233,19 @@ public class Simulation {
             // merge left and right block
             RightBlock = (MemoryBlock) MemoryList.elementAt(blockIndex + 1);
             LeftBlock = (MemoryBlock) MemoryList.elementAt(blockIndex - 1);
-            if (LeftBlock.status == false && RightBlock.status == false) {
+            if (!LeftBlock.status && !RightBlock.status) {
                LeftBlock.endAddr = RightBlock.endAddr;
                LeftBlock.size += (RightBlock.size + Block.size);
                MemoryList.removeElementAt(blockIndex + 1);
                MemoryList.removeElementAt(blockIndex);
             }
-            if (LeftBlock.status == false && RightBlock.status == true) {
+            if (!LeftBlock.status && RightBlock.status) {
                // manipulate address field
                LeftBlock.endAddr = Block.endAddr;
                LeftBlock.size += Block.size;
                MemoryList.removeElementAt(blockIndex);
             }
-            if (RightBlock.status == false && LeftBlock.status == true) {
+            if (!RightBlock.status && LeftBlock.status) {
                // manipulate address field
                RightBlock.startAddr = Block.startAddr;
                RightBlock.size += Block.size;
@@ -250,7 +253,14 @@ public class Simulation {
             }
          }
       }
+
+      System.out.println("Adjacent blocks of memory merged");
       nAvailable = nAvailable + Block.size;
+   }
+
+   // returns time since sim start
+   private long getTime() {
+      return System.nanoTime() - start;
    }
 
    // generates and stores information about request
@@ -267,8 +277,10 @@ public class Simulation {
          this.size = size;
       }
 
-
-
+      @Override
+      public String toString() {
+         return "(" + ")";
+      }
    }
 
 }
